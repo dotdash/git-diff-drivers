@@ -1,0 +1,30 @@
+#!/bin/bash
+
+NEW_FILE=$1
+OLD_FILE=$1
+NEW_REV="$(git rev-parse --short $6)"
+INDEX_MODE=$7
+
+if [ "$2" = "/dev/null" ]; then
+  OLD_REV=0000000
+  OLD_FILE=$2
+  INDEX_MODE=
+else
+  OLD_REV="$(git rev-parse --short $3)"
+fi
+
+echo -e "\e[1mdiff --git $1 $1"
+
+if [ "$2" = "/dev/null" ]; then
+  echo -e "\e[1mnew file mode $7"
+fi
+
+echo -e "\e[1mindex $OLD_REV..$NEW_REV $INDEX_MODE"
+echo -e "\e[1m--- $OLD_FILE"
+echo -e "\e[1m+++ $NEW_FILE"
+
+if [ "$2" = "/dev/null" ]; then
+  echo '{"packages":[],"packages-dev":[]}' | exec composer-lock-diff --from php://fd/0 --to "$5"
+else
+  exec composer-lock-diff --from "$2" --to "$5"
+fi
