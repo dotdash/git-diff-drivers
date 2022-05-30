@@ -22,9 +22,10 @@ fi
 echo -e "\e[1mindex $OLD_REV..$NEW_REV $INDEX_MODE"
 echo -e "\e[1m--- $OLD_FILE"
 echo -e "\e[1m+++ $NEW_FILE"
+echo -e "\e[1m@@ -1 +1 @@ "
 
 if [ "$2" = "/dev/null" ]; then
-  echo '{"packages":[],"packages-dev":[]}' | exec composer-lock-diff --from php://fd/0 --to "$5"
+  echo '{"packages":[],"packages-dev":[]}' | exec composer-lock-diff --from php://fd/0 --to "$5" | sed -e 's/^/ /'
 else
-  exec composer-lock-diff --from "$2" --to "$5"
+  exec composer-lock-diff --from "$2" --to "$5" | sed -e 's/^/ /'
 fi
